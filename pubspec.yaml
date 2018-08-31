@@ -1,0 +1,44 @@
+name: notice
+description: Point of Sale App
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# Read more about versioning at semver.org.
+version: 1.0.0+1
+
+environment:
+    sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
+dependencies:
+    flutter:
+        sdk: flutter
+    redux: ^3.0.0
+    flutter_redux: "0.5.2"
+    path_provider: "^0.4.1"
+    sqflite: "^0.11.0"
+    meta: ">=1.1.0 <2.0.0"
+    flutter_masked_text: ^0.6.0
+    # The following adds the Cupertino Icons font to your application.
+    # Use with the CupertinoIcons class for iOS style icons.
+    cupertino_icons: ^0.1.2
+
+dev_dependencies:
+    flutter_test:
+        sdk: flutter
+    flutter_driver:
+        sdk: flutter
+    test: ^1.3.0
+    mockito: "^3.0.0"
+
+flutter:
+    uses-material-design: true
+    assets:
+        - assets/images/employee.png
+        - assets/images/dark_grunge_bk.jpg
+    fonts:
+        - family: bebas-neue
+          fonts:
+              - asset: assets/fonts/BebasNeue-Regular.ttf
