@@ -151,14 +151,14 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "v32",
+                    "v33",
                     style: TextStyle(
                       //   color: Color(0x771e53e5),
                       color: Color(0xffffffff),
                     ),
                   ),
                   const Text(
-                    '1000 Product', // v32 !ACTION : Change ReleaseName
+                    'Transaction History on SQLite \nPerformance Overlay', // v33 !ACTION : Change ReleaseName
                     style: TextStyle(
                       //   color: Color(0xFF1F94E5),
                       color: Color(0xffffffff),

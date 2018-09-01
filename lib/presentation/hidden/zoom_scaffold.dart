@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../master_product.dart';
 import '../home_screen.dart';
+import '../trans_screen.dart';
 
 class ZoomScaffold extends StatefulWidget {
   final Widget menuScreen;
@@ -49,6 +50,11 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
         break;
       case "2":
         return HomeScreen(
+          openDrawer: menuController.toggle,
+        );
+        break;
+      case "3":
+        return TransScreen(
           openDrawer: menuController.toggle,
         );
         break;
@@ -171,7 +177,10 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [widget.menuScreen, createContentDisplay()],
+      children: [
+        widget.menuScreen,
+        createContentDisplay(),
+      ],
     );
   }
 }

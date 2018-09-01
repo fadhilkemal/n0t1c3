@@ -69,7 +69,6 @@ class _DiscountScreenState extends State<DiscountScreen> {
   double _newTotalBill;
   double _discountValue;
   double _discountAmount;
-  double _potonganHarga;
   var controller = MoneyMaskedTextController(
     // leftSymbol: 'Rp ',
     initialValue: 0.0,
@@ -87,7 +86,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
     }
 
     setState(() {
-      _discountAmount = (-discountValue * _totalBill / 100);
+      _discountAmount = (discountValue * _totalBill / 100);
       _newTotalBill = _totalBill - (discountValue * _totalBill / 100);
       _discountValue = discountValue;
       controller.clear();
@@ -100,7 +99,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
       debugPrint("INI NULL");
     } else {
       setState(() {
-        _discountAmount = -potonganInput;
+        _discountAmount = potonganInput;
         _newTotalBill = _totalBill - potonganInput;
         _discountValue = 0.0;
 
@@ -116,12 +115,11 @@ class _DiscountScreenState extends State<DiscountScreen> {
     _newTotalBill = widget.totalBill;
     _discountValue = 0.0;
     _discountAmount = 0.0;
-    _potonganHarga = 0.0;
     discountInput.addListener(onChangeDiscountInput);
   }
 
   void _onConfirmTap() {
-    if (-_discountAmount > _totalBill) {
+    if (_discountAmount > _totalBill) {
       //Jumlah discount tidak boleh lebih dari totalBill
       return;
     }
@@ -142,7 +140,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
     final rpFormatter = NumberFormat("###,###.###", "pt-br");
     String _totalBillFormatted = rpFormatter.format(_totalBill);
     String _newTotalBillFormatted = rpFormatter.format(_newTotalBill);
-    String _discountAmountFormatted = rpFormatter.format(-1 * _discountAmount);
+    String _discountAmountFormatted = rpFormatter.format(_discountAmount);
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(

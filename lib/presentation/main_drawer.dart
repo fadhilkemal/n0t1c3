@@ -4,8 +4,14 @@ import 'hidden/restaurant_screen.dart';
 import 'hidden/zoom_scaffold.dart';
 
 class MainDrawer extends StatefulWidget {
+  final Function togglePerformanceOverlay;
+
+  MainDrawer({
+    Key key,
+    this.togglePerformanceOverlay,
+  }) : super(key: key);
   @override
-  _MainDrawerState createState() => new _MainDrawerState();
+  _MainDrawerState createState() => _MainDrawerState();
 }
 
 class _MainDrawerState extends State<MainDrawer> {
@@ -19,28 +25,30 @@ class _MainDrawerState extends State<MainDrawer> {
     _selectedMenuItemId = '2';
   }
 
-  final menu = new Menu(
+  final menu = Menu(
     items: [
-      new MenuItem(
+      MenuItem(
         id: '1',
         title: 'Product List',
       ),
-      new MenuItem(
+      MenuItem(
         id: '2',
         title: 'Transaction',
+      ),
+      MenuItem(
+        id: '3',
+        title: 'History',
       ),
     ],
   );
 
-//   var selectedMenuItemId = '1';
-  var activeScreen = restaurantScreen;
-
   @override
   Widget build(BuildContext context) {
-    return new ZoomScaffold(
+    return ZoomScaffold(
       selectedItemId: _selectedMenuItemId,
-      contentScreen: activeScreen,
-      menuScreen: new MenuScreen(
+      contentScreen: Screen(),
+      menuScreen: MenuScreen(
+        togglePerformanceOverlay: widget.togglePerformanceOverlay,
         menu: menu,
         selectedItemId: _selectedMenuItemId,
         onMenuItemSelected: (String itemId) {

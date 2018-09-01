@@ -134,6 +134,9 @@ class PaymentSuggestState extends State<PaymentSuggest> {
 
   List<double> _generatePaymentSuggest(double _totalBill) {
     List<int> paymentSuggestions = [];
+    if (_totalBill == 0) {
+      return [];
+    }
 
     //Hitung kelipatan 1000
     var sisa1000 = _totalBill / 1000;

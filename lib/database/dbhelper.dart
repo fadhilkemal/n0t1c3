@@ -124,25 +124,30 @@ class DBHelper {
     return category;
   }
 
-  Future<List<Category>> getTransactions() async {
-    print("GET TRANSACTION");
+  Future<List<SaleOrder>> getSaleOrders() async {
     var dbClient = await db;
     List<Map> list = await dbClient.rawQuery('SELECT * FROM sale_order;');
-    List<Category> category = new List();
+    List<SaleOrder> transactions = new List();
     for (int i = 0; i < list.length; i++) {
       Map transactionDetail = JsonDecoder().convert(list[i]["detail"]);
-      print(transactionDetail["order_line"]);
-      print(list[i]['name']);
+      //   print(transactionDetail["order_line"]);
+      //   print(list[i]['name']);
       //   print(
       //     // list[i]["detail"][0],
       //     JsonDecoder().convert(list[i]["detail"]),
       //   );
-      //   category.add(
-      //     new Category(
-      //       name: list[i]["category"],
-      //     ),
-      //   );
+      transactions.add(
+        SaleOrder(
+          id: list[i]['id'],
+          name: list[i]['name'],
+          customer: list[i]['customer'],
+          order_date: list[i]['order_date'],
+          pay_method: list[i]['pay_method'],
+          price_discount: list[i]['price_discount'],
+          price_total: list[i]['price_total'],
+        ),
+      );
     }
-    // return category;
+    return transactions;
   }
 }

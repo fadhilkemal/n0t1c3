@@ -108,7 +108,6 @@ Middleware<AppState> _createSaveTransaction(
   return (Store<AppState> store, action, NextDispatcher next) {
     transactionRepo.saveTransaction(action.payload).then(
       (result) {
-        print("ClearCompletedAction THEN $result");
         store.dispatch(ClearCompletedAction());
       },
     );

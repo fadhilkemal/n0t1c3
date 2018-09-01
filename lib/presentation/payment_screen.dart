@@ -19,7 +19,6 @@ import 'package:notice/selectors/selectors.dart';
 
 import 'dart:convert';
 import 'package:notice/models/models.dart';
-import 'package:notice/fas_copy/uuid.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

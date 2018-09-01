@@ -7,11 +7,13 @@ class MenuScreen extends StatefulWidget {
   final Menu menu;
   final String selectedItemId;
   final Function(String) onMenuItemSelected;
+  final Function togglePerformanceOverlay;
 
   MenuScreen({
     this.menu,
     this.selectedItemId,
     this.onMenuItemSelected,
+    this.togglePerformanceOverlay,
   }) : super(key: menuScreenKey);
 
   @override
@@ -126,9 +128,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
         225.0,
         0.0,
       ),
-      child: Column(
-        children: listItems,
-      ),
+      child: Column(children: listItems),
     );
   }
 
@@ -179,6 +179,15 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
                       opacity: selectorOpacity,
                     )
                   : new Container(),
+              Positioned(
+                bottom: 0.0,
+                right: 0.0,
+                child: IconButton(
+                  icon: Icon(Icons.memory),
+                  color: Colors.white30,
+                  onPressed: widget.togglePerformanceOverlay,
+                ),
+              ),
             ],
           ),
         ),

@@ -111,7 +111,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
               return IconButton(
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: () {
-                  onSave();
+                  //   onSave();
                   Navigator.of(context).popUntil(ModalRoute.withName('/'));
                 },
               );
@@ -311,7 +311,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                           splashColor: Colors.teal,
                                           textColor: Colors.white,
                                           onPressed: () {
-                                            onSave();
+                                            // onSave();
 
                                             Navigator.of(context).popUntil(
                                                 ModalRoute.withName('/'));

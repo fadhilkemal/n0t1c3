@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:core';
 
-import 'package:meta/meta.dart';
 import 'package:notice/database/dbhelper.dart';
 import 'package:notice/models/models.dart';
 
@@ -28,12 +27,9 @@ class TransactionRepositoryFlutter {
 
   Future saveTransaction(SaleOrder payload) async {
     var dbHelper = DBHelper();
-    final fetchResult = await dbHelper.dbSaveTransaction(payload);
-    final fetchResult2 = await dbHelper.getTransactions();
-    print("$payload");
-    // print("$fetchResult");
-    print("$fetchResult2");
-    print("saveTransaction saveTransaction 123");
+    await dbHelper.dbSaveTransaction(payload);
+    // final fetchResult2 = await dbHelper.getSaleOrders();
+    // print("$fetchResult2");
     // return Future.wait<dynamic>([
     //     dbHgetProducts
 
