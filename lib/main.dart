@@ -54,10 +54,7 @@ class ReduxApp extends StatelessWidget {
               },
             );
           },
-          '/3': (context) {
-            return MainDrawer();
-          },
-          '/2': (context) {
+          '/oldHome': (context) {
             return StoreBuilder<AppState>(
               onInit: (store) {
                 store.dispatch(LoadCategAction());
@@ -68,15 +65,15 @@ class ReduxApp extends StatelessWidget {
               },
             );
           },
-          ArchSampleRoutes.addTodo: (context) {
-            return AddTodo();
-          },
-          '/paymentScreen': (context) {
-            return PaymentPage();
-          },
-          '/masterProduct': (context) {
-            return MasterProduct();
-          },
+          //   ArchSampleRoutes.addTodo: (context) {
+          //     return AddTodo();
+          //   },
+          //   '/paymentScreen': (context) {
+          //     return PaymentPage();
+          //   },
+          //   '/masterProduct': (context) {
+          //     return MasterProduct();
+          //   },
         },
       ),
     );

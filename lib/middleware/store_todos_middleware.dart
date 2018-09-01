@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:notice/actions/actions.dart';
 import 'package:notice/models/models.dart';
 import 'package:notice/selectors/selectors.dart';
+import 'package:notice/database/transaction/main.dart';
 import 'package:notice/database/category/main.dart';
 import 'package:notice/database/category/file_storage.dart';
 import 'package:notice/tr_copy/todos_repository.dart';
@@ -25,11 +26,13 @@ List<Middleware<AppState>> createStoreTodosMiddleware([
       getApplicationDocumentsDirectory,
     ),
   ),
+  transactionRepo = const TransactionRepositoryFlutter(),
 ]) {
   final saveTodos = _createSaveTodos(repository);
   final loadTodos = _createLoadTodos(repository);
   final saveCateg = _createSaveCateg(categRepository);
   final loadCateg = _createLoadCateg(categRepository);
+  final saveTransaction = _createSaveTransaction(transactionRepo);
 
   return [
     TypedMiddleware<AppState, LoadTodosAction>(loadTodos),
@@ -41,6 +44,7 @@ List<Middleware<AppState>> createStoreTodosMiddleware([
     TypedMiddleware<AppState, DeleteTodoAction>(saveTodos),
     TypedMiddleware<AppState, LoadCategAction>(loadCateg),
     TypedMiddleware<AppState, CategoriesLoadedAction>(saveCateg),
+    TypedMiddleware<AppState, SaveTransaction>(saveTransaction),
   ];
 }
 
@@ -96,5 +100,19 @@ Middleware<AppState> _createSaveCateg(CategRepositoryFlutter categRepository) {
     categRepository.saveCateg(
       action.category.map((categ) => categ.name).toList(),
     );
+  };
+}
+
+Middleware<AppState> _createSaveTransaction(
+    TransactionRepositoryFlutter transactionRepo) {
+  return (Store<AppState> store, action, NextDispatcher next) {
+    transactionRepo.saveTransaction(action.payload).then(
+      (result) {
+        print("ClearCompletedAction THEN $result");
+        store.dispatch(ClearCompletedAction());
+      },
+    );
+    ;
+    next(action);
   };
 }

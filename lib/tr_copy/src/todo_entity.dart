@@ -45,7 +45,7 @@ class TodoEntity {
 
   @override
   String toString() {
-    return 'TodoEntity{complete: $complete, task: $task, note: $note, id: $id}';
+    return 'TodoEntity{task: $task, quantity: $quantity, price: $price}';
   }
 
   static TodoEntity fromJson(Map<String, Object> json) {

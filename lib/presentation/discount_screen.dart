@@ -5,7 +5,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'money_masked.dart';
+// import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'package:notice/presentation/payment_screen.dart';
 
@@ -66,7 +67,9 @@ class DiscountScreen extends StatefulWidget {
 class _DiscountScreenState extends State<DiscountScreen> {
   double _totalBill;
   double _newTotalBill;
+  double _discountValue;
   double _discountAmount;
+  double _potonganHarga;
   var controller = MoneyMaskedTextController(
     // leftSymbol: 'Rp ',
     initialValue: 0.0,
@@ -82,11 +85,11 @@ class _DiscountScreenState extends State<DiscountScreen> {
     } else {
       discountValue = 0.0;
     }
-    _discountAmount = (-discountValue * _totalBill / 100);
-    _newTotalBill = _totalBill - (discountValue * _totalBill / 100);
 
     setState(() {
-      //   _discountValue = discountValue;
+      _discountAmount = (-discountValue * _totalBill / 100);
+      _newTotalBill = _totalBill - (discountValue * _totalBill / 100);
+      _discountValue = discountValue;
       controller.clear();
     });
   }
@@ -99,6 +102,8 @@ class _DiscountScreenState extends State<DiscountScreen> {
       setState(() {
         _discountAmount = -potonganInput;
         _newTotalBill = _totalBill - potonganInput;
+        _discountValue = 0.0;
+
         discountInput.clear();
       });
     }
@@ -109,16 +114,24 @@ class _DiscountScreenState extends State<DiscountScreen> {
     super.initState();
     _totalBill = widget.totalBill;
     _newTotalBill = widget.totalBill;
+    _discountValue = 0.0;
     _discountAmount = 0.0;
+    _potonganHarga = 0.0;
     discountInput.addListener(onChangeDiscountInput);
-    // discountInput.value=TextEditingValue().("0.00%");
   }
 
   void _onConfirmTap() {
+    if (-_discountAmount > _totalBill) {
+      //Jumlah discount tidak boleh lebih dari totalBill
+      return;
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => PaymentScreen(
               totalBill: _newTotalBill,
+              discountAmount: _discountAmount,
+              discountValue: _discountValue,
             ),
       ),
     );
@@ -129,7 +142,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
     final rpFormatter = NumberFormat("###,###.###", "pt-br");
     String _totalBillFormatted = rpFormatter.format(_totalBill);
     String _newTotalBillFormatted = rpFormatter.format(_newTotalBill);
-    String _discountAmountFormatted = rpFormatter.format(_discountAmount);
+    String _discountAmountFormatted = rpFormatter.format(-1 * _discountAmount);
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
@@ -403,7 +416,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 20.0),
                                   child: Text(
-                                    "Rp $_discountAmountFormatted",
+                                    "- Rp $_discountAmountFormatted",
                                     style: TextStyle(
                                       fontSize: 14.0,
                                       letterSpacing: 0.92,

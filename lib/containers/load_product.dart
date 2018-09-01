@@ -43,6 +43,8 @@ class PatchProduct extends StatelessWidget {
     var dbHelper = DBHelper();
     dbHelper.getProducts().then(
       (todos) {
+        todos.sort((a, b) => a.name.compareTo(b.name));
+
         List<Todo> eja = todos.map((x) {
           return Todo.fromEntity(TodoEntity(
               x.name, x.name, x.name, false, 0, x.price, x.category));

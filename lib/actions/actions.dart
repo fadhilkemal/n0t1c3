@@ -4,6 +4,17 @@
 
 import 'package:notice/models/models.dart';
 
+class SaveTransaction {
+  final SaleOrder payload;
+
+  SaveTransaction(this.payload);
+
+  @override
+  String toString() {
+    return 'SaveTransaction{payload: $payload}';
+  }
+}
+
 class ClearCompletedAction {}
 
 class ToggleAllAction {}

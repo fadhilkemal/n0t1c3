@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' as io;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,6 +26,8 @@ class DBHelper {
     // When creating the db, create the table
     await db.execute(
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, name TEXT, description TEXT, category TEXT, price FLOAT )");
+    await db.execute(
+        "CREATE TABLE sale_order(id INTEGER PRIMARY KEY, name TEXT, customer TEXT, order_date TEXT, detail TEXT, pay_method TEXT, price_discount FLOAT, price_total FLOAT )");
   }
 
   void saveEmployee(Product product) async {
@@ -46,6 +49,42 @@ class DBHelper {
               ',' +
               '\'' +
               "${product.price}" +
+              '\'' +
+              ')');
+    });
+  }
+
+  void dbSaveTransaction(SaleOrder order) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawInsert(
+          'INSERT INTO sale_order(name, customer, order_date, detail, pay_method, price_discount, price_total ) VALUES(' +
+              '\'' +
+              '${order.name}' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.customer}' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.order_date}' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.detail}' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.pay_method}' +
+              '\'' +
+              ',' +
+              '\'' +
+              '2000' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.price_total}' +
               '\'' +
               ')');
     });
@@ -83,5 +122,27 @@ class DBHelper {
       );
     }
     return category;
+  }
+
+  Future<List<Category>> getTransactions() async {
+    print("GET TRANSACTION");
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM sale_order;');
+    List<Category> category = new List();
+    for (int i = 0; i < list.length; i++) {
+      Map transactionDetail = JsonDecoder().convert(list[i]["detail"]);
+      print(transactionDetail["order_line"]);
+      print(list[i]['name']);
+      //   print(
+      //     // list[i]["detail"][0],
+      //     JsonDecoder().convert(list[i]["detail"]),
+      //   );
+      //   category.add(
+      //     new Category(
+      //       name: list[i]["category"],
+      //     ),
+      //   );
+    }
+    // return category;
   }
 }

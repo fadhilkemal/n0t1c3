@@ -32,8 +32,6 @@ MessageLookupByLibrary _findExact(localeName) {
 /// User programs should call this before using [localeName] for messages.
 Future initializeMessages(String localeName) async {
   var lib = _deferredLibraries[Intl.canonicalizedLocale(localeName)];
-
-  print("asja");
   await (lib == null ? Future.value(false) : lib());
   initializeInternalMessageLookup(() => CompositeMessageLookup());
   messageLookup.addLocale(localeName, _findGeneratedMessagesFor);

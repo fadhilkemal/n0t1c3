@@ -69,9 +69,20 @@ class Todo {
 
   @override
   String toString() {
-    return 'Todo{name: $task, categ: $category, price: $price, id: $id}';
+    return 'Todo{task: $task, quantity: $quantity, price: $price}';
   }
 
+//   Map<String, Object> toJson() {
+//     return {
+//       "complete": complete,
+//       "task": task,
+//       "note": note,
+//       "id": id,
+//       "quantity": quantity,
+//       "price": price,
+//       "category": category,
+//     };
+//   }
   TodoEntity toEntity() {
     return TodoEntity(
       task,

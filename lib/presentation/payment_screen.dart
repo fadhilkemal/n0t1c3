@@ -5,10 +5,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'money_masked.dart';
+// import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'summary_screen.dart';
 import 'payment_suggest.dart';
+
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:notice/models/app_state.dart';
+import 'package:notice/actions/actions.dart';
+import 'package:notice/selectors/selectors.dart';
+
+import 'dart:convert';
+import 'package:notice/models/models.dart';
+import 'package:notice/fas_copy/uuid.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
@@ -56,10 +67,16 @@ class RupiahFormatter extends TextInputFormatter {
 
 class PaymentScreen extends StatefulWidget {
   final double totalBill;
+  final double discountValue;
+  final double discountAmount;
+  final double potonganHarga;
 
   PaymentScreen({
     Key key,
     @required this.totalBill,
+    this.discountValue = 0.0,
+    this.discountAmount = 0.0,
+    this.potonganHarga = 0.0,
   }) : super(key: key);
 
   @override
@@ -76,6 +93,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     initialValue: 0.0,
   );
 
+  String _kodeStruk;
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +106,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       totalBill: _totalBill,
       calculateKembalian: _calculateKembalianKarenaSuggest,
     );
+    // _kodeStruk = Uuid().generateV4().substring(0, 8);
+    _kodeStruk = DateTime.now().hashCode.toString();
   }
 
   void _calcKembalianKarenaInput(input) {
@@ -127,10 +148,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 totalBill: _totalBill,
                 totalPayment: _totalPayment,
                 totalKembalian: _kembalian,
+                discountAmount: widget.discountAmount,
+                discountValue: widget.discountValue,
+                potonganHarga: widget.potonganHarga,
+                kodeStruk: _kodeStruk,
               ),
         ),
       );
     }
+  }
+
+  Widget _buildButtomBar(bool isOkay, String _kembalianFormatted) {
+    return StoreConnector<AppState, _ViewModel>(
+      converter: _ViewModel.fromStore,
+      builder: (BuildContext context, _ViewModel vm) {
+        return PaymentButton(
+          callback: vm.onSaveTransaction,
+          todos: vm.todos,
+          onConfirmTap: _onConfirmTap,
+          isOkay: isOkay,
+          kembalian: _kembalian,
+          kembalianFormatted: _kembalianFormatted,
+          totalBill: _totalBill,
+          kodeStruk: _kodeStruk,
+        );
+      },
+    );
   }
 
   @override
@@ -150,30 +193,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
         title: Text("Payment"),
         centerTitle: true,
       ),
-      bottomNavigationBar: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: 100.0,
-        child: InkWell(
-          onTap: _onConfirmTap,
-          child: Material(
-            color: isOkay ? Color(0xff08FEA6) : Color(0xffFC6548), //!GANTI
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  _kembalian < 0
-                      ? Text('Rp $_kembalianFormatted')
-                      : Container(),
-                  Icon(
-                    Icons.done,
-                    size: 40.0,
-                    color:
-                        isOkay ? Color(0xff9197ff) : Color(0xff000000), //!GANTI
-                  ),
-                ]),
-          ),
-        ),
-      ),
+      bottomNavigationBar: _buildButtomBar(isOkay, _kembalianFormatted),
+      //   bottomNavigationBar: SizedBox(
+      //     width: MediaQuery.of(context).size.width,
+      //     height: 100.0,
+      //     child: InkWell(
+      //       onTap: _onConfirmTap,
+      //       child: Material(
+      //         color: isOkay ? Color(0xff08FEA6) : Color(0xffFC6548), //!GANTI
+      //         child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             crossAxisAlignment: CrossAxisAlignment.center,
+      //             children: <Widget>[
+      //               _kembalian < 0
+      //                   ? Text('Rp $_kembalianFormatted')
+      //                   : Container(),
+      //               Icon(
+      //                 Icons.done,
+      //                 size: 40.0,
+      //                 color:
+      //                     isOkay ? Color(0xff9197ff) : Color(0xff000000), //!GANTI
+      //               ),
+      //             ]),
+      //       ),
+      //     ),
+      //   ),
       body: Container(
         color: Color(0xFFfffbfd),
         child: ListView(
@@ -326,6 +370,99 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class PaymentButton extends StatelessWidget {
+  final Function callback;
+  final Function onConfirmTap;
+  final bool isOkay;
+  final double kembalian;
+  final String kembalianFormatted;
+  final todos;
+  final double totalBill;
+  final String kodeStruk;
+
+  PaymentButton({
+    Key key,
+    @required this.callback,
+    @required this.onConfirmTap,
+    @required this.isOkay,
+    @required this.kembalian,
+    @required this.kembalianFormatted,
+    @required this.todos,
+    @required this.totalBill,
+    @required this.kodeStruk,
+  }) : super(key: key);
+
+  void _onTap() {
+    //Siapin Struktur transaksi dari Screen ini
+    String payload = JsonEncoder().convert({
+      'order_line': todos.map((todo) => todo.toEntity().toJson()).toList(),
+    });
+
+    SaleOrder newTransaction = SaleOrder(
+      detail: payload,
+      customer: "Pelanggan 1",
+      order_date: DateTime.now().toString().substring(0, 19),
+      price_discount: 0.0,
+      pay_method: "Tunai",
+      name: kodeStruk,
+      // kembalian: 0.0,
+      //   pay_amount: 0.0,
+      price_total: totalBill,
+    );
+
+    onConfirmTap();
+    callback(newTransaction);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 100.0,
+      child: InkWell(
+        onTap: _onTap,
+        child: Material(
+          color: isOkay ? Color(0xff08FEA6) : Color(0xffFC6548), //!GANTI
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                kembalian < 0 ? Text('Rp $kembalianFormatted') : Container(),
+                Icon(
+                  Icons.done,
+                  size: 40.0,
+                  color:
+                      isOkay ? Color(0xff9197ff) : Color(0xff000000), //!GANTI
+                ),
+              ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _ViewModel {
+  final todos;
+  final Function onSaveTransaction;
+
+  _ViewModel({
+    @required this.todos,
+    @required this.onSaveTransaction,
+  });
+
+  static _ViewModel fromStore(Store<AppState> store) {
+    return _ViewModel(
+      //   todos: store.state.todos,
+      todos: filteredTodosSelectorActive(
+        todosSelector(store.state),
+      ),
+      onSaveTransaction: (SaleOrder payload) {
+        store.dispatch(SaveTransaction(payload));
+      },
     );
   }
 }
