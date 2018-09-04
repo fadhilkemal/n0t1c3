@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'hidden/menu_screen.dart';
-import 'hidden/restaurant_screen.dart';
 import 'hidden/zoom_scaffold.dart';
 
 class MainDrawer extends StatefulWidget {

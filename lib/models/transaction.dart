@@ -14,6 +14,11 @@ class SaleOrder {
   /// Date untuk disimpan dan Sortable. Karena di SQLITE tipenya harus Text
   ///
   /// Contoh : 2018-09-01 14:22:21
+  String order_datetime;
+
+  /// Date untuk disimpan dan Gampang di Group. Karena di SQLITE tipenya harus Text
+  ///
+  /// Contoh : 2018-09-01 14:22:21
   String order_date;
 
   /// Data disimpan dalam bentuk JSON. Akan digunakan untuk Screen Transaction Details
@@ -30,6 +35,7 @@ class SaleOrder {
     this.id,
     this.name,
     this.customer,
+    this.order_datetime,
     this.order_date,
     this.detail,
     this.pay_method,

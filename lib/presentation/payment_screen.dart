@@ -400,11 +400,13 @@ class PaymentButton extends StatelessWidget {
     String payload = JsonEncoder().convert({
       'order_line': todos.map((todo) => todo.toEntity().toJson()).toList(),
     });
-
+    DateTime datetimeNow = DateTime.now();
+    // DateTime datetimeNow = DateTime.now().subtract(Duration(days: 11));
     SaleOrder newTransaction = SaleOrder(
       detail: payload,
       customer: "Pelanggan 1",
-      order_date: DateTime.now().toString().substring(0, 19),
+      order_datetime: datetimeNow.toString().substring(0, 19),
+      order_date: datetimeNow.toString().substring(0, 10),
       price_discount: 0.0,
       pay_method: "Tunai",
       name: kodeStruk,

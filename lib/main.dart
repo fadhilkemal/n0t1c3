@@ -14,6 +14,16 @@ import 'package:notice/models/models.dart';
 import 'package:notice/presentation/home_screen.dart';
 import 'package:notice/presentation/main_drawer.dart';
 import 'package:notice/reducers/app_state_reducer.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:flutter/services.dart';
+
+changeStatusColor(Color color) async {
+  try {
+    await FlutterStatusbarcolor.setStatusBarColor(color);
+  } on PlatformException catch (e) {
+    print(e);
+  }
+}
 
 void main() {
   // ignore: deprecated_member_use
@@ -31,13 +41,23 @@ class ReduxApp extends StatefulWidget {
 class ReduxAppState extends State<ReduxApp> {
   bool _performanceOverlay;
 
+  changeStatusColor(Color color) async {
+    try {
+      await FlutterStatusbarcolor.setStatusBarColor(color);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _performanceOverlay = true;
+    changeStatusColor(Colors.transparent);
   }
 
   void togglePerformanceOverlay() {
+    // changeStatusColor(Colors.transparent);
     setState(() {
       _performanceOverlay = !_performanceOverlay;
     });
@@ -55,7 +75,7 @@ class ReduxAppState extends State<ReduxApp> {
       store: store,
       child: MaterialApp(
         showPerformanceOverlay: _performanceOverlay,
-        title: ReduxLocalizations().appTitle,
+        title: "v34",
         theme: ArchSampleTheme.theme,
         localizationsDelegates: [
           ArchSampleLocalizationsDelegate(),

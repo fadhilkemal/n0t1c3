@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:notice/models/product.dart';
 import 'dart:async';
 import 'package:notice/database/dbhelper.dart';
-import 'package:notice/presentation/master_product_add.dart';
-import 'package:notice/containers/load_product.dart';
 import 'package:notice/models/models.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:intl/intl.dart';
 
-Future<List<SaleOrder>> fetchTransactionFromDB() async {
+Future<Map> fetchTransactionFromDB() async {
   var dbHelper = DBHelper();
   Future transactions = dbHelper.getSaleOrders();
   return transactions;
 }
+
+final rpFormatter = NumberFormat("###,###.###", "pt-br");
 
 class TransScreen extends StatefulWidget {
   final Function openDrawer;
@@ -19,34 +20,185 @@ class TransScreen extends StatefulWidget {
     this.openDrawer,
   });
   @override
-  TransScreenState createState() => new TransScreenState();
+  TransScreenState createState() => TransScreenState();
 }
 
 class TransScreenState extends State<TransScreen> {
-  final masterProductScaffoldKey = new GlobalKey<ScaffoldState>();
+  List<Widget> _buildSlivers(
+      BuildContext context, List headers, List<SaleOrder> order_data) {
+    List<Widget> slivers = List<Widget>();
+    int i = 0;
+    // for (final header in headers) {
+    //   List<SaleOrder> filtered_order = order_data
+    //       .where((order) => order.order_date == header['order_date'])
+    //       .toList();
+    //   slivers
+    //       .addAll(_buildLists(context, i, i += 1, 3, header, filtered_order));
+    // }
 
-//   void _showSnackBar(String text) {
-//     masterProductScaffoldKey.currentState
-//         .showSnackBar(new SnackBar(content: new Text(text)));
-//   }
+    for (int index = 0; index < headers.length; index++) {
+      var header = headers[index];
+      List<SaleOrder> filtered_order = order_data
+          .where((order) => order.order_date == header['order_date'])
+          .toList();
+      slivers.addAll(_buildLists(context, i, 1, 3, header, filtered_order));
+    }
+    // slivers.addAll(_buildLists(context, i, i += 2, 4));
+    return slivers;
+  }
 
-  void _onConfirmTap2() {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (_) => TransScreenAdd(),
-    //     fullscreenDialog: true,
-    //   ),
-    // );
+  List<Widget> _buildLists(BuildContext context, int firstIndex, int count,
+      int children_count, header, order_data) {
+    return List.generate(count, (sliverIndex) {
+      sliverIndex += firstIndex;
+      return SliverStickyHeader(
+        header: _buildHeader(sliverIndex, header),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return _buildList(order_data[index]);
+            },
+            childCount: order_data.length,
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildList(SaleOrder order) {
+    String _priceTotalFormatted = rpFormatter.format(order.price_total);
+
+    final leftSection = CircleAvatar(
+      child: Icon(Icons.attach_money),
+    );
+    final middleSection = new Expanded(
+      child: Container(
+        padding: new EdgeInsets.only(left: 10.0, bottom: 10.0, top: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            new Text(
+              "${order.name}",
+              style: new TextStyle(
+                color: Color(0xff144e76), //!GANTI
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
+              ),
+            ),
+            new Text(
+              //   "Rp ${order.price_total}",
+              "Rp ${_priceTotalFormatted}",
+              style: new TextStyle(
+                // color: Color(0xff2F72FC), //!GANTI
+                color: Color(0x0af144e76), //!GANTI
+                fontWeight: FontWeight.w600,
+                fontSize: 14.0,
+              ),
+            ),
+            // new Text(
+            //   "${todo.category}",
+            //   style: new TextStyle(
+            //     color: Color(0x00000000),
+            //     fontSize: 10.0,
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+
+    final rightSection = Container(
+      child: Padding(
+        padding: new EdgeInsets.only(left: 10.0, bottom: 10.0, top: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            new Text(
+              "${order.pay_method}",
+              style: new TextStyle(
+                color: Color(0xff144e76), //!GANTI
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
+              ),
+            ),
+            new Text(
+              "${order.order_datetime.substring(11, 16)}",
+              style: new TextStyle(
+                // color: Color(0xff2F72FC), //!GANTI
+                color: Color(0x0af144e76), //!GANTI
+                fontWeight: FontWeight.w600,
+                fontSize: 14.0,
+              ),
+            ),
+            // new Text(
+            //   "${todo.category}",
+            //   style: new TextStyle(
+            //     color: Color(0x00000000),
+            //     fontSize: 10.0,
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+
+    return ListTile(
+      leading: leftSection,
+      //   title: Text('${order.name}'),
+      title: Container(
+        height: 70.0,
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          children: <Widget>[
+            // leftSection,
+            middleSection,
+            rightSection,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(int index, header) {
+    String _priceTotalFormatted = rpFormatter.format(header['price_total']);
+
+    return Row(
+      children: <Widget>[
+        Container(
+          height: 60.0,
+          color: Colors.lightBlue,
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            header['order_date'],
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 60.0,
+            color: Colors.lightBlue,
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerRight,
+            child: Text(
+              "Rp ${_priceTotalFormatted}",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      key: masterProductScaffoldKey,
-      appBar: new AppBar(
-        title: new Text('Transaction List'),
-        leading: new IconButton(
-          icon: new Icon(Icons.menu),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Transaction List'),
+        leading: IconButton(
+          icon: Icon(Icons.menu),
           onPressed: () {
             widget.openDrawer();
             // context.widget.menuController.toggle();
@@ -60,40 +212,53 @@ class TransScreenState extends State<TransScreen> {
       //   drawer: Drawer(
       //     child: DrawerList(),
       //   ),
-      body: new Container(
-        padding: new EdgeInsets.all(16.0),
-        child: new FutureBuilder<List<SaleOrder>>(
+      body: FutureBuilder<Map>(
           future: fetchTransactionFromDB(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return new ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Text(snapshot.data[index].name,
-                              style: new TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18.0)),
-                          new Text(snapshot.data[index].customer,
-                              style: new TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14.0)),
-                          new Text("${snapshot.data[index].price_total}",
-                              style: new TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14.0)),
-                          new Divider()
-                        ]);
-                  });
-            } else if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
+              List header_data = snapshot.data['header'];
+              List<SaleOrder> order_data = snapshot.data['order'];
+              return CustomScrollView(
+                slivers: _buildSlivers(context, header_data, order_data),
+              );
+            } else {
+              return Container();
             }
-            return new Container(
-              alignment: AlignmentDirectional.center,
-              child: new CircularProgressIndicator(),
-            );
-          },
-        ),
-      ),
+          }),
+      //   body: Container(
+      //     padding: EdgeInsets.all(16.0),
+      //     child: FutureBuilder<List<SaleOrder>>(
+      //       future: fetchTransactionFromDB(),
+      //       builder: (context, snapshot) {
+      //         if (snapshot.hasData) {
+      //           return ListView.builder(
+      //               itemCount: snapshot.data.length,
+      //               itemBuilder: (context, index) {
+      //                 return Column(
+      //                     crossAxisAlignment: CrossAxisAlignment.start,
+      //                     children: <Widget>[
+      //                       Text(snapshot.data[index].name,
+      //                           style: TextStyle(
+      //                               fontWeight: FontWeight.bold, fontSize: 18.0)),
+      //                       Text(snapshot.data[index].customer,
+      //                           style: TextStyle(
+      //                               fontWeight: FontWeight.bold, fontSize: 14.0)),
+      //                       Text("${snapshot.data[index].price_total}",
+      //                           style: TextStyle(
+      //                               fontWeight: FontWeight.bold, fontSize: 14.0)),
+      //                       Divider()
+      //                     ]);
+      //               });
+      //         } else if (snapshot.hasError) {
+      //           return Text("${snapshot.error}");
+      //         }
+      //         return Container(
+      //           alignment: AlignmentDirectional.center,
+      //           child: CircularProgressIndicator(),
+      //         );
+      //       },
+      //     ),
+      //   ),
     );
   }
 }

@@ -13,8 +13,6 @@ class ReduxLocalizations {
       ReduxLocalizations,
     );
   }
-
-  String get appTitle => "v33";
 }
 
 class ReduxLocalizationsDelegate

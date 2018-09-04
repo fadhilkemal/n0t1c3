@@ -27,7 +27,7 @@ class DBHelper {
     await db.execute(
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, name TEXT, description TEXT, category TEXT, price FLOAT )");
     await db.execute(
-        "CREATE TABLE sale_order(id INTEGER PRIMARY KEY, name TEXT, customer TEXT, order_date TEXT, detail TEXT, pay_method TEXT, price_discount FLOAT, price_total FLOAT )");
+        "CREATE TABLE sale_order(id INTEGER PRIMARY KEY, name TEXT, customer TEXT, order_datetime TEXT, order_date TEXT, detail TEXT, pay_method TEXT, price_discount FLOAT, price_total FLOAT )");
   }
 
   void saveEmployee(Product product) async {
@@ -58,7 +58,7 @@ class DBHelper {
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
-          'INSERT INTO sale_order(name, customer, order_date, detail, pay_method, price_discount, price_total ) VALUES(' +
+          'INSERT INTO sale_order(name, customer, order_datetime, order_date, detail, pay_method, price_discount, price_total ) VALUES(' +
               '\'' +
               '${order.name}' +
               '\'' +
@@ -68,7 +68,11 @@ class DBHelper {
               '\'' +
               ',' +
               '\'' +
-              '${order.order_date}' +
+              '${order.order_datetime}' + //   '2018-09-03 12:46:45' +
+              '\'' +
+              ',' +
+              '\'' +
+              '${order.order_date}' + //   '2018-09-03
               '\'' +
               ',' +
               '\'' +
@@ -124,30 +128,47 @@ class DBHelper {
     return category;
   }
 
-  Future<List<SaleOrder>> getSaleOrders() async {
+  Future<Map> getSaleOrders() async {
     var dbClient = await db;
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM sale_order;');
+    List<Map> list = await dbClient
+        .rawQuery('SELECT * FROM sale_order ORDER BY order_datetime DESC ;');
+    List queryResult = await dbClient.rawQuery(
+        'SELECT order_date, SUM(price_total) as price_total FROM sale_order GROUP BY order_date ORDER BY order_date DESC;');
     List<SaleOrder> transactions = new List();
+
+    for (int i = 0; i < queryResult.length; i++) {
+      print(queryResult[i]);
+    }
+
     for (int i = 0; i < list.length; i++) {
-      Map transactionDetail = JsonDecoder().convert(list[i]["detail"]);
+      var transaction = list[i];
+      Map transactionDetail = JsonDecoder().convert(transaction["detail"]);
+      transactionDetail;
       //   print(transactionDetail["order_line"]);
-      //   print(list[i]['name']);
+      print(transaction['order_datetime']);
+      print(transaction['price_total']);
+      print(transaction['customer']);
       //   print(
-      //     // list[i]["detail"][0],
-      //     JsonDecoder().convert(list[i]["detail"]),
+      //     // transaction["detail"][0],
+      //     JsonDecoder().convert(transaction["detail"]),
       //   );
       transactions.add(
         SaleOrder(
-          id: list[i]['id'],
-          name: list[i]['name'],
-          customer: list[i]['customer'],
-          order_date: list[i]['order_date'],
-          pay_method: list[i]['pay_method'],
-          price_discount: list[i]['price_discount'],
-          price_total: list[i]['price_total'],
+          id: transaction['id'],
+          name: transaction['name'],
+          customer: transaction['customer'],
+          order_datetime: transaction['order_datetime'],
+          order_date: transaction['order_date'],
+          pay_method: transaction['pay_method'],
+          price_discount: transaction['price_discount'],
+          price_total: transaction['price_total'],
         ),
       );
     }
-    return transactions;
+
+    return {
+      'header': queryResult,
+      'order': transactions,
+    };
   }
 }
