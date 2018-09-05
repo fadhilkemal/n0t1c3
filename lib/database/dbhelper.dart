@@ -84,7 +84,7 @@ class DBHelper {
               '\'' +
               ',' +
               '\'' +
-              '2000' +
+              '${order.price_discount}' +
               '\'' +
               ',' +
               '\'' +
@@ -136,18 +136,11 @@ class DBHelper {
         'SELECT order_date, SUM(price_total) as price_total FROM sale_order GROUP BY order_date ORDER BY order_date DESC;');
     List<SaleOrder> transactions = new List();
 
-    for (int i = 0; i < queryResult.length; i++) {
-      print(queryResult[i]);
-    }
-
     for (int i = 0; i < list.length; i++) {
       var transaction = list[i];
       Map transactionDetail = JsonDecoder().convert(transaction["detail"]);
       transactionDetail;
       //   print(transactionDetail["order_line"]);
-      print(transaction['order_datetime']);
-      print(transaction['price_total']);
-      print(transaction['customer']);
       //   print(
       //     // transaction["detail"][0],
       //     JsonDecoder().convert(transaction["detail"]),
@@ -170,5 +163,23 @@ class DBHelper {
       'header': queryResult,
       'order': transactions,
     };
+  }
+
+  Future<Map> getSaleOrderDetail(int orderId) async {
+    var dbClient = await db;
+    List<Map> list =
+        await dbClient.rawQuery('SELECT * FROM sale_order WHERE id=$orderId');
+    Map productDetail = {
+      'id': list[0]["id"],
+      'name': list[0]["name"],
+      'customer': list[0]["customer"],
+      'order_datetime': list[0]["order_datetime"],
+      'order_date': list[0]["order_date"],
+      'detail': list[0]["detail"],
+      'pay_method': list[0]["pay_method"],
+      'price_discount': list[0]["price_discount"],
+      'price_total': list[0]["price_total"],
+    };
+    return productDetail;
   }
 }

@@ -170,6 +170,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
           kembalianFormatted: _kembalianFormatted,
           totalBill: _totalBill,
           kodeStruk: _kodeStruk,
+          discountAmount: widget.discountAmount,
+          discountValue: widget.discountValue,
+          potonganHarga: widget.potonganHarga,
         );
       },
     );
@@ -383,6 +386,10 @@ class PaymentButton extends StatelessWidget {
   final double totalBill;
   final String kodeStruk;
 
+  final double discountValue;
+  final double discountAmount;
+  final double potonganHarga;
+
   PaymentButton({
     Key key,
     @required this.callback,
@@ -393,6 +400,9 @@ class PaymentButton extends StatelessWidget {
     @required this.todos,
     @required this.totalBill,
     @required this.kodeStruk,
+    this.discountValue = 0.0,
+    this.discountAmount = 0.0,
+    this.potonganHarga = 0.0,
   }) : super(key: key);
 
   void _onTap() {
@@ -407,7 +417,7 @@ class PaymentButton extends StatelessWidget {
       customer: "Pelanggan 1",
       order_datetime: datetimeNow.toString().substring(0, 19),
       order_date: datetimeNow.toString().substring(0, 10),
-      price_discount: 0.0,
+      price_discount: discountAmount,
       pay_method: "Tunai",
       name: kodeStruk,
       // kembalian: 0.0,

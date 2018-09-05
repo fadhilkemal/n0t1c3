@@ -4,6 +4,7 @@ import 'package:notice/database/dbhelper.dart';
 import 'package:notice/models/models.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:intl/intl.dart';
+import 'trans_detail.dart';
 
 Future<Map> fetchTransactionFromDB() async {
   var dbHelper = DBHelper();
@@ -25,7 +26,10 @@ class TransScreen extends StatefulWidget {
 
 class TransScreenState extends State<TransScreen> {
   List<Widget> _buildSlivers(
-      BuildContext context, List headers, List<SaleOrder> order_data) {
+    BuildContext context,
+    List headers,
+    List<SaleOrder> order_data,
+  ) {
     List<Widget> slivers = List<Widget>();
     int i = 0;
     // for (final header in headers) {
@@ -146,8 +150,21 @@ class TransScreenState extends State<TransScreen> {
 
     return ListTile(
       leading: leftSection,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TransDetailScreen(orderId: order.id),
+            fullscreenDialog: true,
+          ),
+        );
+      },
       //   title: Text('${order.name}'),
       title: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey),
+          ),
+        ),
         height: 70.0,
         width: MediaQuery.of(context).size.width,
         child: Row(
