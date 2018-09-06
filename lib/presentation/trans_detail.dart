@@ -4,7 +4,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:notice/database/dbhelper.dart';
 import 'dart:convert';

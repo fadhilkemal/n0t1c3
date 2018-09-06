@@ -19,15 +19,15 @@ class MasterProduct extends StatefulWidget {
     this.openDrawer,
   });
   @override
-  MasterProductState createState() => new MasterProductState();
+  MasterProductState createState() => MasterProductState();
 }
 
 class MasterProductState extends State<MasterProduct> {
-  final masterProductScaffoldKey = new GlobalKey<ScaffoldState>();
+  final masterProductScaffoldKey = GlobalKey<ScaffoldState>();
 
 //   void _showSnackBar(String text) {
 //     masterProductScaffoldKey.currentState
-//         .showSnackBar(new SnackBar(content: new Text(text)));
+//         .showSnackBar(SnackBar(content: Text(text)));
 //   }
 
   void _onConfirmTap2() {
@@ -41,12 +41,12 @@ class MasterProductState extends State<MasterProduct> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       key: masterProductScaffoldKey,
-      appBar: new AppBar(
-        title: new Text('Product List'),
-        leading: new IconButton(
-          icon: new Icon(Icons.menu),
+      appBar: AppBar(
+        title: Text('Product List'),
+        leading: IconButton(
+          icon: Icon(Icons.menu),
           onPressed: () {
             widget.openDrawer();
             // context.widget.menuController.toggle();
@@ -58,18 +58,18 @@ class MasterProductState extends State<MasterProduct> {
           Container(
             margin: const EdgeInsets.only(top: 10.0),
             child: LoadProduct(),
-            // child: new RaisedButton(
+            // child: RaisedButton(
             //   //   onPressed: _submit,
             //   onPressed: _loadToCart,
-            //   child: new Text('^'),
+            //   child: Text('^'),
             // ),
           ),
           Container(
             margin: const EdgeInsets.only(top: 10.0),
-            child: new RaisedButton(
+            child: RaisedButton(
               //   onPressed: _submit,
               onPressed: _onConfirmTap2,
-              child: new Text('+'),
+              child: Text('+'),
             ),
           ),
         ],
@@ -77,36 +77,36 @@ class MasterProductState extends State<MasterProduct> {
       //   drawer: Drawer(
       //     child: DrawerList(),
       //   ),
-      body: new Container(
-        padding: new EdgeInsets.all(16.0),
-        child: new FutureBuilder<List<Product>>(
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: FutureBuilder<List<Product>>(
           future: fetchEmployeesFromDatabase(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return new ListView.builder(
+              return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
-                    return new Column(
+                    return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          new Text(snapshot.data[index].name,
-                              style: new TextStyle(
+                          Text(snapshot.data[index].name,
+                              style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18.0)),
-                          new Text(snapshot.data[index].description,
-                              style: new TextStyle(
+                          Text(snapshot.data[index].description,
+                              style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14.0)),
-                          new Text("${snapshot.data[index].price}",
-                              style: new TextStyle(
+                          Text("${snapshot.data[index].price}",
+                              style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14.0)),
-                          new Divider()
+                          Divider()
                         ]);
                   });
             } else if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
+              return Text("${snapshot.error}");
             }
-            return new Container(
+            return Container(
               alignment: AlignmentDirectional.center,
-              child: new CircularProgressIndicator(),
+              child: CircularProgressIndicator(),
             );
           },
         ),

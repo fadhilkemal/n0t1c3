@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'customer_dialog.dart';
 import 'dart:ui' as ui;
 import 'dart:math';
 
@@ -9,6 +9,38 @@ class BottomBarCustom extends StatelessWidget {
 
   const BottomBarCustom({Key key, this.constraints, this.onPaymentPressed})
       : super(key: key);
+
+  _changeCustomer(context) {
+    void onTap() {
+      print("ASDADAS Change Customer");
+      final snackBar = SnackBar(content: Text("Change Customer 2"));
+      Navigator.of(context).pop(false);
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
+
+    return showDialog(
+          context: context,
+          builder: (context) {
+            return CustomerDialog(onTap: onTap);
+            // return AlertDialog(
+            //   title: Text('Are you sure?'),
+            //   content: Text('Unsaved data will be lost.'),
+            //   actions: <Widget>[
+            //     FlatButton(
+            //       onPressed: () => Navigator.of(context).pop(false),
+            //       child: Text('No'),
+            //     ),
+            //     FlatButton(
+            //       onPressed: () =>
+            //           Navigator.of(context).popUntil(ModalRoute.withName('/')),
+            //       child: Text('Yes'),
+            //     ),
+            //   ],
+            // );
+          },
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +92,7 @@ class BottomBarCustom extends StatelessWidget {
             left: offsetX,
             child: GestureDetector(
               onTap: () {
-                final snackBar = SnackBar(content: Text("Change Customer"));
-
-                Scaffold.of(context).showSnackBar(snackBar);
+                _changeCustomer(context);
               },
               child: SizedBox(
                   width: radiusInner * 2.0,

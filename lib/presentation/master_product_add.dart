@@ -62,7 +62,7 @@ class MasterProductAddState extends State<MasterProductAdd> {
       price: price,
     );
     var dbHelper = DBHelper();
-    dbHelper.saveEmployee(product);
+    dbHelper.saveProduct(product);
     Navigator.pop(context);
     _showSnackBar("New Product saved successfully");
   }

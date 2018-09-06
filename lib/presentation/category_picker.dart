@@ -254,7 +254,10 @@ class _MyTabbedPageState extends State<MyTabbedPage>
             children: <Widget>[
               Container(
                 child: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: Icon(
+                    Icons.search,
+                    color: _screen == 1 ? Color(0xff1F94E5) : null,
+                  ),
                   onPressed: () {
                     setState(() {
                       _screen = 1;

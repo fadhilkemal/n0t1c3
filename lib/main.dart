@@ -52,7 +52,7 @@ class ReduxAppState extends State<ReduxApp> {
   @override
   void initState() {
     super.initState();
-    _performanceOverlay = true;
+    _performanceOverlay = false;
     changeStatusColor(Colors.transparent);
   }
 
@@ -75,7 +75,7 @@ class ReduxAppState extends State<ReduxApp> {
       store: store,
       child: MaterialApp(
         showPerformanceOverlay: _performanceOverlay,
-        title: "v35",
+        title: "v36",
         theme: ArchSampleTheme.theme,
         localizationsDelegates: [
           ArchSampleLocalizationsDelegate(),

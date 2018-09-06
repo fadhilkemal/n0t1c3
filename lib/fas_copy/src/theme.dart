@@ -1,8 +1,61 @@
-// Copyright 2018 The Flutter Architecture Sample Authors. All rights reserved.
-// Use of this source code is governed by the MIT license that can be found
-// in the LICENSE file.
-
 import 'package:flutter/material.dart';
+
+class TestInkSplash extends InkSplash {
+  TestInkSplash({
+    MaterialInkController controller,
+    RenderBox referenceBox,
+    Offset position,
+    Color color,
+    bool containedInkWell = false,
+    RectCallback rectCallback,
+    BorderRadius borderRadius,
+    ShapeBorder customBorder,
+    double radius,
+    VoidCallback onRemoved,
+  }) : super(
+          controller: controller,
+          referenceBox: referenceBox,
+          position: position,
+          color: color,
+          containedInkWell: containedInkWell,
+          rectCallback: rectCallback,
+          borderRadius: borderRadius,
+          customBorder: customBorder,
+          radius: radius,
+          onRemoved: onRemoved,
+        );
+}
+
+class TestInkSplashFactory extends InteractiveInkFeatureFactory {
+  const TestInkSplashFactory();
+
+  @override
+  InteractiveInkFeature create({
+    MaterialInkController controller,
+    RenderBox referenceBox,
+    Offset position,
+    Color color,
+    bool containedInkWell = false,
+    RectCallback rectCallback,
+    BorderRadius borderRadius,
+    ShapeBorder customBorder,
+    double radius,
+    VoidCallback onRemoved,
+  }) {
+    return new TestInkSplash(
+      controller: controller,
+      referenceBox: referenceBox,
+      position: position,
+      color: Colors.green,
+      containedInkWell: containedInkWell,
+      rectCallback: rectCallback,
+      borderRadius: borderRadius,
+      customBorder: customBorder,
+      radius: 65.0,
+      onRemoved: onRemoved,
+    );
+  }
+}
 
 class ArchSampleTheme {
   static get theme {
@@ -12,7 +65,8 @@ class ArchSampleTheme {
 
     return ThemeData.light().copyWith(
       primaryColor: Color(0xff2f72fc), // menu bar di atas
-      //   selectedRowColor: Colors.red[300],\
+      //   splashColor: Colors.red,
+      //   selectedRowColor: Colors.red[300],
 
       //   primaryTextTheme: originalTextTheme.copyWith(
       //     title: originalBody1.copyWith(color: Colors.white), //tab bar title

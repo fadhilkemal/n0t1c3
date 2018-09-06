@@ -10,3 +10,4 @@ export 'visibility_filter.dart';
 export 'product.dart';
 export 'category.dart';
 export 'transaction.dart';
+export 'customer.dart';

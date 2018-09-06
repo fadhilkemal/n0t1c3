@@ -6,11 +6,11 @@ class Product {
   double price;
 
   Product({
+    this.id,
     this.name,
     this.description,
     this.category,
     this.price,
-    this.id,
   });
 
   Product.fromMap(Map map) {

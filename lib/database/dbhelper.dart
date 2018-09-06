@@ -27,10 +27,12 @@ class DBHelper {
     await db.execute(
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, name TEXT, description TEXT, category TEXT, price FLOAT )");
     await db.execute(
+        "CREATE TABLE customer(id INTEGER PRIMARY KEY, name TEXT, phone TEXT)");
+    await db.execute(
         "CREATE TABLE sale_order(id INTEGER PRIMARY KEY, name TEXT, customer TEXT, order_datetime TEXT, order_date TEXT, detail TEXT, pay_method TEXT, price_discount FLOAT, price_total FLOAT )");
   }
 
-  void saveEmployee(Product product) async {
+  void saveProduct(Product product) async {
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
@@ -52,6 +54,25 @@ class DBHelper {
               '\'' +
               ')');
     });
+  }
+
+  Future<int> saveCustomer(Customer customer) async {
+    var dbClient = await db;
+    int customerId = await dbClient.transaction(
+      (txn) async {
+        return await txn.rawInsert(
+            'INSERT INTO customer(name, phone ) VALUES(' +
+                '\'' +
+                customer.name +
+                '\'' +
+                ',' +
+                '\'' +
+                customer.phone +
+                '\'' +
+                ')');
+      },
+    );
+    return customerId;
   }
 
   void dbSaveTransaction(SaleOrder order) async {
@@ -111,6 +132,23 @@ class DBHelper {
       );
     }
     return product;
+  }
+
+  Future<List<Customer>> getCustomer() async {
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM customer');
+
+    List<Customer> customer = new List();
+    for (int i = 0; i < list.length; i++) {
+      customer.add(
+        new Customer(
+          id: list[i]["id"],
+          name: list[i]["name"],
+          phone: list[i]["phone"],
+        ),
+      );
+    }
+    return customer;
   }
 
   Future<List<Category>> getCategories() async {
