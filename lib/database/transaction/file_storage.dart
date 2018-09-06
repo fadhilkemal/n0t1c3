@@ -33,8 +33,6 @@ class CategFileStorage {
     // try {
     //   return await loadCategFromJson();
     // } catch (e) {
-    //   print("BELUM ADA JSON");
-
     //   return ["todos"];
     // }
   }

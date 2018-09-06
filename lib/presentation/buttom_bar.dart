@@ -12,10 +12,9 @@ class BottomBarCustom extends StatelessWidget {
 
   _changeCustomer(context) {
     void onTap() {
-      print("ASDADAS Change Customer");
-      final snackBar = SnackBar(content: Text("Change Customer 2"));
       Navigator.of(context).pop(false);
-      Scaffold.of(context).showSnackBar(snackBar);
+      //   final snackBar = SnackBar(content: Text("Change Customer 2"));
+      //   Scaffold.of(context).showSnackBar(snackBar);
     }
 
     return showDialog(

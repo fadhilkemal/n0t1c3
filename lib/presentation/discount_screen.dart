@@ -96,7 +96,7 @@ class _DiscountScreenState extends State<DiscountScreen> {
   void onChangePotonganInput(input) {
     double potonganInput = controller.numberValue;
     if (potonganInput == null) {
-      debugPrint("INI NULL");
+      debugPrint("NULL");
     } else {
       setState(() {
         _discountAmount = potonganInput;

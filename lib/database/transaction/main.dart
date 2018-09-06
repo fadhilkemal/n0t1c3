@@ -28,12 +28,5 @@ class TransactionRepositoryFlutter {
   Future saveTransaction(SaleOrder payload) async {
     var dbHelper = DBHelper();
     await dbHelper.dbSaveTransaction(payload);
-    // final fetchResult2 = await dbHelper.getSaleOrders();
-    // print("$fetchResult2");
-    // return Future.wait<dynamic>([
-    //     dbHgetProducts
-
-    //   fileStorage.saveTransaction(transaction),
-    // ]);
   }
 }

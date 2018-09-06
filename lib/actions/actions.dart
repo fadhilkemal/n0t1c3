@@ -62,6 +62,17 @@ class UpdateQueryFilter {
   }
 }
 
+class UpdateCustomer {
+  final Customer customer;
+
+  UpdateCustomer(this.customer);
+
+  @override
+  String toString() {
+    return 'customer{customer: $customer}';
+  }
+}
+
 class UpdateTodoAction {
   final String id;
   final Todo updatedTodo;

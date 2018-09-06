@@ -41,6 +41,7 @@ class SummaryScreen extends StatefulWidget {
   final double discountAmount;
   final double potonganHarga;
   final String kodeStruk;
+  final String customerName;
 
   SummaryScreen({
     Key key,
@@ -49,6 +50,7 @@ class SummaryScreen extends StatefulWidget {
     @required this.totalKembalian,
     @required this.kodeStruk,
     this.discountValue = 0.0,
+    this.customerName = "",
     this.discountAmount = 0.0,
     this.potonganHarga = 0.0,
   }) : super(key: key);
@@ -147,6 +149,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         )
                       ],
                     ),
+                    widget.customerName.isNotEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("${widget.customerName}"),
+                              )
+                            ],
+                          )
+                        : Container(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[

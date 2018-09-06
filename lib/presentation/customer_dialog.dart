@@ -5,6 +5,11 @@ import 'dart:async';
 import 'package:notice/database/dbhelper.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:notice/models/models.dart';
+import 'package:notice/actions/actions.dart';
+
 class CustomerDialog extends StatelessWidget {
   final Function() onTap;
   CustomerDialog({
@@ -39,8 +44,8 @@ class CustomerDialog extends StatelessWidget {
                   height: 230.0,
                   child: TabBarView(
                     children: [
-                      AddNewCustomer(onTambahCustomer: onTap),
-                      ExistingCustomer(),
+                      AddNewCustomer(callbackDialog: onTap),
+                      ExistingCustomer(callbackDialog: onTap),
                     ],
                   ),
                 ),
@@ -60,9 +65,9 @@ Future<int> addNewCustomerToDb(Customer customer) async {
 }
 
 class AddNewCustomer extends StatefulWidget {
-  final Function() onTambahCustomer;
+  final Function() callbackDialog;
   AddNewCustomer({
-    this.onTambahCustomer,
+    this.callbackDialog,
   });
 
   @override
@@ -73,23 +78,52 @@ class AddNewCustomer extends StatefulWidget {
 
 class AddNewCustomerState extends State<AddNewCustomer> {
   final formKey = GlobalKey<FormState>();
-  final _UsNumberTextInputFormatter _phoneNumberFormatter =
-      new _UsNumberTextInputFormatter();
+  final _IndoNumberTextInputFormatter _phoneNumberFormatter =
+      new _IndoNumberTextInputFormatter();
 
   String _customerName;
   String _customerPhone;
-  void _tambahCustomer() async {
-    if (this.formKey.currentState.validate()) {
-      formKey.currentState.save();
-    } else {
-      return null;
-    }
-    Customer newCustomer = Customer(name: _customerName, phone: _customerPhone);
-    int customerId = await addNewCustomerToDb(newCustomer);
 
-    print("_tambahCustomer customerId");
-    print(customerId);
-    // onTambahCustomer();
+  Widget _buildButtonButtom(Function dispatchCustomer) {
+    void _tambahCustomer() async {
+      if (this.formKey.currentState.validate()) {
+        formKey.currentState.save();
+      } else {
+        return null;
+      }
+      Customer newCustomer =
+          Customer(name: _customerName, phone: _customerPhone);
+      int customerId = await addNewCustomerToDb(newCustomer);
+      dispatchCustomer(Customer(
+        name: _customerName,
+        id: customerId,
+      ));
+      widget.callbackDialog();
+    }
+
+    return InkWell(
+      splashColor: Colors.red,
+      onTap: _tambahCustomer,
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF33b17c),
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              'Tambah Customer',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontFamily: 'helvetica_neue_light',
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -183,30 +217,16 @@ class AddNewCustomerState extends State<AddNewCustomer> {
                 ],
               ),
             ),
-
             // Button Buttom
-            InkWell(
-              splashColor: Colors.red,
-              onTap: _tambahCustomer,
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF33b17c),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'Tambah Customer',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontFamily: 'helvetica_neue_light',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+            StoreConnector<AppState, Function>(
+              converter: (Store<AppState> store) {
+                return (Customer customer) {
+                  store.dispatch(UpdateCustomer(customer));
+                };
+              },
+              builder: (BuildContext context, Function dispatchCustomer) {
+                return _buildButtonButtom(dispatchCustomer);
+              },
             ),
           ],
         ),
@@ -221,8 +241,42 @@ Future<List<Customer>> fetchEmployeesFromDatabase() async {
   return employees;
 }
 
+class CustomerItem extends StatelessWidget {
+  final GestureTapCallback onTap;
+  final customer;
+
+  CustomerItem({
+    @required this.onTap,
+    @required this.customer,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(customer.name,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+            Text("${customer.phone}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
+            Divider()
+          ]),
+    );
+  }
+}
+
 class ExistingCustomer extends StatelessWidget {
-  Widget _buildListCustomer() {
+  final Function() callbackDialog;
+  ExistingCustomer({
+    this.callbackDialog,
+  });
+  Widget _buildListCustomer(Function dispatchCustomer) {
+    void _pilihCustomer(customer) {
+      dispatchCustomer(customer);
+      this.callbackDialog();
+    }
+
     return Container(
       //   padding: EdgeInsets.all(16.0),
       child: FutureBuilder<List<Customer>>(
@@ -232,17 +286,13 @@ class ExistingCustomer extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(snapshot.data[index].name,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18.0)),
-                      Text("${snapshot.data[index].phone}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14.0)),
-                      Divider()
-                    ]);
+                final customer = snapshot.data[index];
+                return CustomerItem(
+                  onTap: () {
+                    _pilihCustomer(customer);
+                  },
+                  customer: customer,
+                );
               },
             );
           } else if (snapshot.hasError) {
@@ -259,86 +309,20 @@ class ExistingCustomer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildListCustomer();
-    // return Container(
-    //   width: 260.0,
-    //   height: 230.0,
-    //   decoration: BoxDecoration(
-    //     shape: BoxShape.rectangle,
-    //     color: const Color(0xFFFFFF),
-    //     borderRadius: BorderRadius.all(Radius.circular(32.0)),
-    //   ),
-    //   child: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.stretch,
-    //     children: <Widget>[
-    //       // dialog top
-    //       Expanded(
-    //         child: Row(
-    //           children: <Widget>[
-    //             Container(
-    //               // padding: EdgeInsets.all(10.0),
-    //               decoration: BoxDecoration(
-    //                 color: Colors.white,
-    //               ),
-    //               child: Text(
-    //                 'R222ate',
-    //                 style: TextStyle(
-    //                   color: Colors.black,
-    //                   fontSize: 18.0,
-    //                   fontFamily: 'helvetica_neue_light',
-    //                 ),
-    //                 textAlign: TextAlign.center,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-
-    //       // dialog centre
-    //       Expanded(
-    //         child: Container(
-    //             child: TextField(
-    //           decoration: InputDecoration(
-    //             border: InputBorder.none,
-    //             filled: false,
-    //             contentPadding: EdgeInsets.only(
-    //                 left: 10.0, top: 10.0, bottom: 10.0, right: 10.0),
-    //             hintText: ' add review',
-    //             hintStyle: TextStyle(
-    //               color: Colors.grey.shade500,
-    //               fontSize: 12.0,
-    //               fontFamily: 'helvetica_neue_light',
-    //             ),
-    //           ),
-    //         )),
-    //         flex: 2,
-    //       ),
-
-    //       // dialog bottom
-    //       Expanded(
-    //         child: Container(
-    //           padding: EdgeInsets.all(16.0),
-    //           decoration: BoxDecoration(
-    //             color: const Color(0xFF33b17c),
-    //           ),
-    //           child: Text(
-    //             'Rate produc2t',
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //               fontSize: 18.0,
-    //               fontFamily: 'helvetica_neue_light',
-    //             ),
-    //             textAlign: TextAlign.center,
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
+    return StoreConnector<AppState, Function>(
+      converter: (Store<AppState> store) {
+        return (Customer customer) {
+          store.dispatch(UpdateCustomer(customer));
+        };
+      },
+      builder: (BuildContext context, Function dispatchCustomer) {
+        return _buildListCustomer(dispatchCustomer);
+      },
+    );
   }
 }
 
-class _UsNumberTextInputFormatter extends TextInputFormatter {
+class _IndoNumberTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
@@ -346,10 +330,6 @@ class _UsNumberTextInputFormatter extends TextInputFormatter {
     int selectionIndex = newValue.selection.end;
     int usedSubstringIndex = 0;
     final StringBuffer newText = new StringBuffer();
-    // if (newTextLength >= 1) {
-    //   newText.write('(');
-    //   if (newValue.selection.end >= 1) selectionIndex++;
-    // }
     if (newTextLength >= 5) {
       newText.write(newValue.text.substring(0, usedSubstringIndex = 4) + '-');
       if (newValue.selection.end >= 4) selectionIndex++;

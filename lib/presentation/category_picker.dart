@@ -147,8 +147,6 @@ class _MyTabbedPageState extends State<MyTabbedPage>
   void searchInputChanged(String input2) {
     main() {
       const jeda = const Duration(milliseconds: 1200);
-      //   new Timer(jeda, () => print('Jeda! $input'));
-
       _timeDilationTimer?.cancel();
       _timeDilationTimer = null;
 
@@ -329,7 +327,6 @@ class _TabBaruNewState extends State<TabBaruNew> {
     // myTabs = List.generate(widget.categories.length, (index) {
     //   return Tab(text: widget.categories[index].toUpperCase());
     // });
-    // print("INIT TAB BARU NEW STATE");
   }
 
   @override

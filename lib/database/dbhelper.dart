@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io' as io;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -176,13 +175,6 @@ class DBHelper {
 
     for (int i = 0; i < list.length; i++) {
       var transaction = list[i];
-      Map transactionDetail = JsonDecoder().convert(transaction["detail"]);
-      transactionDetail;
-      //   print(transactionDetail["order_line"]);
-      //   print(
-      //     // transaction["detail"][0],
-      //     JsonDecoder().convert(transaction["detail"]),
-      //   );
       transactions.add(
         SaleOrder(
           id: transaction['id'],

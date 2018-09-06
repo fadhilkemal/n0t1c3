@@ -15,6 +15,7 @@ class AppState {
   final VisibilityFilter activeFilter;
   final String categoryPicker;
   final String queryFilter;
+  final Customer customer;
 
   AppState({
     this.isLoading = false,
@@ -23,6 +24,7 @@ class AppState {
     this.categories = const [],
     this.categoryPicker = "",
     this.queryFilter = "",
+    this.customer = null,
     this.activeTab = AppTab.todos,
     this.activeFilter = VisibilityFilter.all,
   });
@@ -38,6 +40,7 @@ class AppState {
     VisibilityFilter activeFilter,
     String categoryPicker,
     String queryFilter,
+    Customer customer,
   }) {
     return AppState(
       isLoading: isLoading ?? this.isLoading,
@@ -48,6 +51,7 @@ class AppState {
       activeFilter: activeFilter ?? this.activeFilter,
       categoryPicker: categoryPicker ?? this.categoryPicker,
       queryFilter: queryFilter ?? this.queryFilter,
+      customer: customer ?? this.customer,
     );
   }
 
@@ -60,6 +64,7 @@ class AppState {
       activeTab.hashCode ^
       activeFilter.hashCode ^
       categoryPicker.hashCode ^
+      customer.hashCode ^
       queryFilter.hashCode;
 
   @override
@@ -74,6 +79,7 @@ class AppState {
           activeTab == other.activeTab &&
           categoryPicker == other.categoryPicker &&
           queryFilter == other.queryFilter &&
+          customer == other.customer &&
           activeFilter == other.activeFilter;
 
   @override

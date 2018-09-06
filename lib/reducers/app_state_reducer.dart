@@ -9,6 +9,7 @@ import 'package:notice/reducers/todos_reducer.dart';
 import 'package:notice/reducers/visibility_reducer.dart';
 import 'package:notice/reducers/category_picker.dart';
 import 'package:notice/reducers/categories_reducer.dart';
+import 'package:notice/reducers/customer_reducer.dart';
 import 'package:notice/reducers/search_query.dart';
 
 // We create the State reducer by combining many smaller reducers into one!
@@ -17,6 +18,7 @@ AppState appReducer(AppState state, action) {
     isLoading: loadingReducer(state.isLoading, action),
     isSearchLoading: searchLoadingReducer(state.isSearchLoading, action),
     todos: todosReducer(state.todos, action),
+    customer: customerReducer(state.customer, action),
     categories: categoriesReducer(state.categories, action),
     categoryPicker: categoryReducer(state.categoryPicker, action),
     activeFilter: visibilityReducer(state.activeFilter, action),

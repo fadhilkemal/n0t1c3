@@ -112,15 +112,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void _calcKembalianKarenaInput(input) {
     double val = controller.numberValue;
     if (val == null) {
-      debugPrint("INI NULL");
+      debugPrint("NULL");
     } else {
       setState(() {
-        if (input is String) {
-          debugPrint("String");
-        }
-        if (input is double) {
-          debugPrint("double");
-        }
         _kembalian = val - _totalBill;
         _totalPayment = val;
       });
@@ -139,7 +133,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
-  void _onConfirmTap() {
+  void _onConfirmTap(SaleOrder newTransaction) {
     if ((_kembalian >= 0.0) && (_totalPayment > 0.0)) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -151,6 +145,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 discountValue: widget.discountValue,
                 potonganHarga: widget.potonganHarga,
                 kodeStruk: _kodeStruk,
+                customerName: newTransaction.customer,
               ),
         ),
       );
@@ -164,6 +159,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         return PaymentButton(
           callback: vm.onSaveTransaction,
           todos: vm.todos,
+          customer: vm.customer,
           onConfirmTap: _onConfirmTap,
           isOkay: isOkay,
           kembalian: _kembalian,
@@ -382,7 +378,8 @@ class PaymentButton extends StatelessWidget {
   final bool isOkay;
   final double kembalian;
   final String kembalianFormatted;
-  final todos;
+  final List<Todo> todos;
+  final Customer customer;
   final double totalBill;
   final String kodeStruk;
 
@@ -398,6 +395,7 @@ class PaymentButton extends StatelessWidget {
     @required this.kembalian,
     @required this.kembalianFormatted,
     @required this.todos,
+    @required this.customer,
     @required this.totalBill,
     @required this.kodeStruk,
     this.discountValue = 0.0,
@@ -414,7 +412,7 @@ class PaymentButton extends StatelessWidget {
     // DateTime datetimeNow = DateTime.now().subtract(Duration(days: 11));
     SaleOrder newTransaction = SaleOrder(
       detail: payload,
-      customer: "Pelanggan 1",
+      customer: customer != null ? customer.name : "",
       order_datetime: datetimeNow.toString().substring(0, 19),
       order_date: datetimeNow.toString().substring(0, 10),
       price_discount: discountAmount,
@@ -425,7 +423,7 @@ class PaymentButton extends StatelessWidget {
       price_total: totalBill,
     );
 
-    onConfirmTap();
+    onConfirmTap(newTransaction);
     callback(newTransaction);
   }
 
@@ -458,11 +456,13 @@ class PaymentButton extends StatelessWidget {
 
 class _ViewModel {
   final todos;
+  final Customer customer;
   final Function onSaveTransaction;
 
   _ViewModel({
     @required this.todos,
     @required this.onSaveTransaction,
+    @required this.customer,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
@@ -471,6 +471,7 @@ class _ViewModel {
       todos: filteredTodosSelectorActive(
         todosSelector(store.state),
       ),
+      customer: store.state.customer,
       onSaveTransaction: (SaleOrder payload) {
         store.dispatch(SaveTransaction(payload));
       },
