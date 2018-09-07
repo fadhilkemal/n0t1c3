@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:notice/fas_copy/flutter_architecture_samples.dart';
 import 'package:notice/models/models.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TodoItemPrePayment extends StatelessWidget {
   final DismissDirectionCallback onDismissed;
@@ -80,10 +81,21 @@ class TodoItemPrePayment extends StatelessWidget {
         ),
       ),
     );
+    final SlidableController slidableController = new SlidableController();
 
-    return Dismissible(
-      key: ArchSampleKeys.todoItem(todo.id),
-      onDismissed: onDismissed,
+    return Slidable(
+      controller: slidableController,
+      //   key: ArchSampleKeys.todoItem(todo.id),
+      key: new Key(todo.id),
+      secondaryActions: <Widget>[
+        new IconSlideAction(
+          caption: 'Delete',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: onZeroTap,
+        ),
+      ],
+      delegate: new SlidableDrawerDelegate(),
       child: Column(
         children: <Widget>[
           Divider(

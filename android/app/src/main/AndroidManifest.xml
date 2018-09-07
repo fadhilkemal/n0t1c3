@@ -14,7 +14,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="v36"
+        android:label="v37"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

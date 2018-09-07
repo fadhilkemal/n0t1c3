@@ -75,7 +75,7 @@ class ReduxAppState extends State<ReduxApp> {
       store: store,
       child: MaterialApp(
         showPerformanceOverlay: _performanceOverlay,
-        title: "v36",
+        title: "v37",
         theme: ArchSampleTheme.theme,
         localizationsDelegates: [
           ArchSampleLocalizationsDelegate(),

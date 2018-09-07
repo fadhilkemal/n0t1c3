@@ -11,7 +11,7 @@ import 'package:notice/models/models.dart';
 import 'package:notice/presentation/todo_item.dart';
 import 'package:notice/presentation/todo_item_pre_payment.dart';
 
-class TodoList extends StatelessWidget {
+class TodoList extends StatefulWidget {
   final String viewType;
   final List<Todo> todos;
   final List<Todo> todosActive;
@@ -36,6 +36,13 @@ class TodoList extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  TodoListState createState() {
+    return new TodoListState();
+  }
+}
+
+class TodoListState extends State<TodoList> {
+  @override
   Widget build(BuildContext context) {
     return AppLoading(builder: (context, vm) {
       if (vm.isSearchLoading || vm.isLoading) {
@@ -47,7 +54,7 @@ class TodoList extends StatelessWidget {
           ),
         );
       } else {
-        if (viewType == "prepayment") {
+        if (widget.viewType == "prepayment") {
           return _buildListViewPrePayment();
         } else {
           return _buildListView();
@@ -57,33 +64,30 @@ class TodoList extends StatelessWidget {
   }
 
   ListView _buildListViewPrePayment() {
-    if (todosActive.isNotEmpty) {
+    if (widget.todosActive.isNotEmpty) {
       //   todosActive.add(todosActive.last);
       return ListView.builder(
         padding: EdgeInsets.only(right: 4.0, left: 4.0, bottom: 4.0),
-        key: ArchSampleKeys.todoList,
-        itemCount: todosActive.length,
+        itemCount: widget.todosActive.length,
         itemBuilder: (BuildContext context, int index) {
-          final todo = todosActive[index];
+          final todo = widget.todosActive[index];
           return TodoItemPrePayment(
             todo: todo,
             onDismissed: (direction) {
               _removeTodo(context, todo);
             },
-
-            //   onTap: () => _onTodoTap(context, todo),
             onTap: () {
               FocusScope.of(context).requestFocus(FocusNode());
-              incrementItem(todo);
+              widget.incrementItem(todo);
             },
             onMinusTap: () {
-              decrementItem(todo);
+              widget.decrementItem(todo);
             },
             onZeroTap: () {
-              zeroItem(todo);
+              widget.zeroItem(todo);
             },
             onCheckboxChanged: (complete) {
-              onCheckboxChanged(todo, complete);
+              widget.onCheckboxChanged(todo, complete);
             },
           );
         },
@@ -107,29 +111,32 @@ class TodoList extends StatelessWidget {
   }
 
   ListView _buildListView() {
-    if (todos.isNotEmpty) {
+    if (widget.todos.isNotEmpty) {
       //   todos.add(todos.last);
       return ListView.builder(
         padding: EdgeInsets.only(right: 4.0, left: 4.0, bottom: 140.0),
-        key: ArchSampleKeys.todoList,
-        itemCount: todos.length,
+        // key: ArchSampleKeys.todoList,
+        itemCount: widget.todos.length,
         itemBuilder: (BuildContext context, int index) {
-          final todo = todos[index];
+          final todo = widget.todos[index];
           return TodoItem(
+            key: Key("Todo$index"),
             todo: todo,
             onDismissed: (direction) {
               _removeTodo(context, todo);
             },
-            //   onTap: () => _onTodoTap(context, todo),
             onTap: () {
               FocusScope.of(context).requestFocus(FocusNode());
-              incrementItem(todo);
+              widget.incrementItem(todo);
             },
             onMinusTap: () {
-              decrementItem(todo);
+              widget.decrementItem(todo);
             },
             onCheckboxChanged: (complete) {
-              onCheckboxChanged(todo, complete);
+              widget.onCheckboxChanged(todo, complete);
+            },
+            onZeroTap: () {
+              widget.zeroItem(todo);
             },
           );
         },
@@ -153,7 +160,7 @@ class TodoList extends StatelessWidget {
   }
 
   void _removeTodo(BuildContext context, Todo todo) {
-    onRemove(todo);
+    widget.onRemove(todo);
 
     Scaffold.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
@@ -165,33 +172,7 @@ class TodoList extends StatelessWidget {
         ),
         action: SnackBarAction(
           label: ArchSampleLocalizations.of(context).undo,
-          onPressed: () => onUndoRemove(todo),
+          onPressed: () => widget.onUndoRemove(todo),
         )));
   }
-
-//   void _onTodoTap(BuildContext context, Todo todo) {
-//     Navigator.of(context)
-//         .push(MaterialPageRoute(
-//       builder: (_) => TodoDetails(id: todo.id),
-//     ))
-//         .then((removedTodo) {
-//       if (removedTodo != null) {
-//         Scaffold.of(context).showSnackBar(SnackBar(
-//             key: ArchSampleKeys.snackbar,
-//             duration: Duration(seconds: 2),
-//             backgroundColor: Theme.of(context).backgroundColor,
-//             content: Text(
-//               ArchSampleLocalizations.of(context).todoDeleted(todo.task),
-//               maxLines: 1,
-//               overflow: TextOverflow.ellipsis,
-//             ),
-//             action: SnackBarAction(
-//               label: ArchSampleLocalizations.of(context).undo,
-//               onPressed: () {
-//                 onUndoRemove(todo);
-//               },
-//             )));
-//       }
-//     });
-//   }
 }
