@@ -4,20 +4,19 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:notice/fas_copy/flutter_architecture_samples.dart';
 import 'package:notice/models/models.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
-class TodoItem extends StatelessWidget {
+class TodoItem extends StatefulWidget {
   final DismissDirectionCallback onDismissed;
   final GestureTapCallback onTap;
-  final GestureTapCallback onZeroTap;
   final GestureTapCallback onMinusTap;
+  final GestureTapCallback onZeroTap;
   final ValueChanged<bool> onCheckboxChanged;
   final Todo todo;
 
   TodoItem({
-    Key key,
     @required this.onDismissed,
     @required this.onTap,
     @required this.onMinusTap,
@@ -27,9 +26,18 @@ class TodoItem extends StatelessWidget {
   });
 
   @override
+  TodoItemState createState() {
+    return new TodoItemState();
+  }
+}
+
+class TodoItemState extends State<TodoItem> {
+  final SlidableController slidableController = SlidableController();
+
+  @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat("###,###.###", "pt-br");
-    String priceFormatted = formatter.format(todo.price);
+    String priceFormatted = formatter.format(widget.todo.price);
 
     final leftSection = Container(
       child: CircleAvatar(
@@ -39,39 +47,39 @@ class TodoItem extends StatelessWidget {
         backgroundColor: Color(0x0FF8fe0fe),
         radius: 24.0,
         child: Text(
-          "${todo.quantity}",
+          "${widget.todo.quantity}",
           style: TextStyle(color: Color(0xFF1F94E5)),
         ),
       ),
     );
 
-    final middleSection = new Expanded(
+    final middleSection = Expanded(
       child: Container(
-        padding: new EdgeInsets.only(left: 18.0, bottom: 10.0, top: 10.0),
+        padding: EdgeInsets.only(left: 18.0, bottom: 10.0, top: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            new Text(
-              "${todo.task}",
-              style: new TextStyle(
+            Text(
+              "${widget.todo.task}",
+              style: TextStyle(
                 color: Color(0xff144e76), //!GANTI
                 fontWeight: FontWeight.w600,
                 fontSize: 16.0,
               ),
             ),
-            new Text(
+            Text(
               "Rp $priceFormatted",
-              style: new TextStyle(
+              style: TextStyle(
                 // color: Color(0xff2F72FC), //!GANTI
                 color: Color(0x0af144e76), //!GANTI
                 fontWeight: FontWeight.w600,
                 fontSize: 14.0,
               ),
             ),
-            // new Text(
+            // Text(
             //   "${todo.category}",
-            //   style: new TextStyle(
+            //   style: TextStyle(
             //     color: Color(0x00000000),
             //     fontSize: 10.0,
             //   ),
@@ -86,14 +94,14 @@ class TodoItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           InkWell(
-              onTap: onMinusTap,
+              onTap: widget.onMinusTap,
               child: CircleAvatar(
                 // backgroundColor: Color(0x0FFDFDFDF),//!GANTI
                 backgroundColor: Color(0x0FFdbdedd),
                 radius: 24.0,
-                child: new Text(
+                child: Text(
                   "-",
-                  style: new TextStyle(
+                  style: TextStyle(
                     // color: Colors.white, //!GANTI
                     color: Color(0xff8e9da7),
                     fontSize: 25.0,
@@ -103,41 +111,73 @@ class TodoItem extends StatelessWidget {
         ],
       ),
     );
-    return Column(
-      key: ArchSampleKeys.todoItem(todo.id),
-      children: <Widget>[
-        Divider(
-          height: 0.0,
-          indent: 1.0,
-        ),
-        ListTile(
-          onTap: onTap,
-          // leading: Checkbox(
-          //   key: ArchSampleKeys.todoItemCheckbox(todo.id),
-          //   value: todo.complete,
-          //   onChanged: onCheckboxChanged,
-          // ),
-          title: Container(
-            height: 70.0,
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              key: ArchSampleKeys.todoItemTask(todo.id),
-              children: <Widget>[
-                leftSection,
-                middleSection,
-                rightSection,
-              ],
-            ),
+
+    Widget _buildTodoContent(BuildContext context) {
+      return Column(
+        children: <Widget>[
+          Divider(
+            height: 0.0,
+            indent: 1.0,
           ),
-          // subtitle: Text(
-          //   "${todo.note} - Qty ${todo.quantity} - Price ${priceFormatted} - ${todo.category}",
-          //   key: ArchSampleKeys.todoItemNote(todo.id),
-          //   maxLines: 3,
-          //   overflow: TextOverflow.ellipsis,
-          //   style: Theme.of(context).textTheme.subhead,
-          // ),
-        ),
-      ],
+          ListTile(
+            onTap: () {
+              if (slidableController.activeState == null) {
+                widget.onTap();
+              } else {
+                if (slidableController
+                        .activeState.actionsMoveAnimation.status ==
+                    AnimationStatus.dismissed) {
+                  widget.onTap();
+                }
+                if (slidableController
+                        .activeState.actionsMoveAnimation.status ==
+                    AnimationStatus.completed) {
+                  slidableController.activeState.close();
+                }
+              }
+            },
+            title: Container(
+              height: 70.0,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                // key: ArchSampleKeys.todoItemTask(todo.id),
+                children: <Widget>[
+                  leftSection,
+                  middleSection,
+                  rightSection,
+                ],
+              ),
+            ),
+            // subtitle: Text(
+            //   "${todo.note} - Qty ${todo.quantity} - Price ${priceFormatted} - ${todo.category}",
+            //   key: ArchSampleKeys.todoItemNote(todo.id),
+            //   maxLines: 3,
+            //   overflow: TextOverflow.ellipsis,
+            //   style: Theme.of(context).textTheme.subhead,
+            // ),
+          ),
+        ],
+      );
+    }
+
+    return Slidable.builder(
+      key: Key(widget.todo.id),
+      controller: slidableController,
+      secondaryActionDelegate: SlideActionBuilderDelegate(
+        actionCount: 1,
+        builder: (context, index, animation, renderingMode) {
+          return IconSlideAction(
+            caption: 'Delete',
+            color: renderingMode == SlidableRenderingMode.slide
+                ? Colors.red.withOpacity(animation.value)
+                : Colors.red,
+            icon: Icons.delete,
+            onTap: widget.onZeroTap,
+          );
+        },
+      ),
+      delegate: SlidableDrawerDelegate(),
+      child: _buildTodoContent(context),
     );
   }
 }

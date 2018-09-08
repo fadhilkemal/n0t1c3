@@ -17,6 +17,7 @@ class TodoItem extends StatelessWidget {
   final Todo todo;
 
   TodoItem({
+    Key key,
     @required this.onDismissed,
     @required this.onTap,
     @required this.onMinusTap,

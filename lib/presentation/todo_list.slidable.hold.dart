@@ -138,7 +138,7 @@ class TodoListState extends State<TodoList> {
               ),
             ],
             child: TodoItem(
-              key: Key("Todo${todo.id}"),
+              //   key: Key("Todo${todo.id}"),
               todo: todo,
               onDismissed: (direction) {
                 _removeTodo(context, todo);
