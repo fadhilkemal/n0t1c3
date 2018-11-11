@@ -1,61 +1,61 @@
 import 'package:flutter/material.dart';
 
-class TestInkSplash extends InkSplash {
-  TestInkSplash({
-    MaterialInkController controller,
-    RenderBox referenceBox,
-    Offset position,
-    Color color,
-    bool containedInkWell = false,
-    RectCallback rectCallback,
-    BorderRadius borderRadius,
-    ShapeBorder customBorder,
-    double radius,
-    VoidCallback onRemoved,
-  }) : super(
-          controller: controller,
-          referenceBox: referenceBox,
-          position: position,
-          color: color,
-          containedInkWell: containedInkWell,
-          rectCallback: rectCallback,
-          borderRadius: borderRadius,
-          customBorder: customBorder,
-          radius: radius,
-          onRemoved: onRemoved,
-        );
-}
+// class TestInkSplash extends InkSplash {
+//   TestInkSplash({
+//     MaterialInkController controller,
+//     RenderBox referenceBox,
+//     Offset position,
+//     Color color,
+//     bool containedInkWell = false,
+//     RectCallback rectCallback,
+//     BorderRadius borderRadius,
+//     ShapeBorder customBorder,
+//     double radius,
+//     VoidCallback onRemoved,
+//   }) : super(
+//           controller: controller,
+//           referenceBox: referenceBox,
+//           position: position,
+//           color: color,
+//           containedInkWell: containedInkWell,
+//           rectCallback: rectCallback,
+//           borderRadius: borderRadius,
+//           customBorder: customBorder,
+//           radius: radius,
+//           onRemoved: onRemoved,
+//         );
+// }
 
-class TestInkSplashFactory extends InteractiveInkFeatureFactory {
-  const TestInkSplashFactory();
+// class TestInkSplashFactory extends InteractiveInkFeatureFactory {
+//   const TestInkSplashFactory();
 
-  @override
-  InteractiveInkFeature create({
-    MaterialInkController controller,
-    RenderBox referenceBox,
-    Offset position,
-    Color color,
-    bool containedInkWell = false,
-    RectCallback rectCallback,
-    BorderRadius borderRadius,
-    ShapeBorder customBorder,
-    double radius,
-    VoidCallback onRemoved,
-  }) {
-    return new TestInkSplash(
-      controller: controller,
-      referenceBox: referenceBox,
-      position: position,
-      color: Colors.green,
-      containedInkWell: containedInkWell,
-      rectCallback: rectCallback,
-      borderRadius: borderRadius,
-      customBorder: customBorder,
-      radius: 65.0,
-      onRemoved: onRemoved,
-    );
-  }
-}
+//   @override
+//   InteractiveInkFeature create({
+//     MaterialInkController controller,
+//     RenderBox referenceBox,
+//     Offset position,
+//     Color color,
+//     bool containedInkWell = false,
+//     RectCallback rectCallback,
+//     BorderRadius borderRadius,
+//     ShapeBorder customBorder,
+//     double radius,
+//     VoidCallback onRemoved,
+//   }) {
+//     return new TestInkSplash(
+//       controller: controller,
+//       referenceBox: referenceBox,
+//       position: position,
+//       color: Colors.green,
+//       containedInkWell: containedInkWell,
+//       rectCallback: rectCallback,
+//       borderRadius: borderRadius,
+//       customBorder: customBorder,
+//       radius: 65.0,
+//       onRemoved: onRemoved,
+//     );
+//   }
+// }
 
 class ArchSampleTheme {
   static get theme {

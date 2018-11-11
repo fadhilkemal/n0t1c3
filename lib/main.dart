@@ -27,7 +27,7 @@ changeStatusColor(Color color) async {
 
 void main() {
   // ignore: deprecated_member_use
-  MaterialPageRoute.debugEnableFadingRoutes = true;
+//   MaterialPageRoute.debugEnableFadingRoutes = true;
   runApp(ReduxApp());
 }
 
@@ -75,7 +75,7 @@ class ReduxAppState extends State<ReduxApp> {
       store: store,
       child: MaterialApp(
         showPerformanceOverlay: _performanceOverlay,
-        title: "v37",
+        title: "v38",
         theme: ArchSampleTheme.theme,
         localizationsDelegates: [
           ArchSampleLocalizationsDelegate(),

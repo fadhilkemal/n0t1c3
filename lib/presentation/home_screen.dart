@@ -151,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "v37", //!ACTION : Change ReleaseName
+                    "v38", //!ACTION : Change ReleaseName
                     style: TextStyle(
                       //   color: Color(0x771e53e5),
                       color: Color(0xffffffff),
